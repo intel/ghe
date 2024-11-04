@@ -9,7 +9,6 @@ which is then fed back to the dispay hardware.
 
 ## Steps to compile
 meson build
-
 ninja -C build
 ## To install
 ninja -C build install
