@@ -33,5 +33,5 @@ struct globalhist_args {
 	uint32_t resolution_y;
 };
 
-void set_histogram_data_bin(struct globalhist_args *gheargs);
+void histogram_compute_generate_data_bin(struct globalhist_args *gheargs);
 #endif
