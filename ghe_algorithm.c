@@ -356,7 +356,7 @@ static void ghe_initialize_algorithm(struct globalhist_context *ghecontext,
 	ghecontext->ghefunctable.ghesetiet(ghecontext, gheargs);
 }
 
-void set_histogram_data_bin(struct globalhist_args *gheargs)
+void histogram_compute_generate_data_bin(struct globalhist_args *gheargs)
 {
 	struct globalhist_context *ghecontext =
 		(struct globalhist_context *)malloc(sizeof(struct globalhist_context));
