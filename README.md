@@ -7,6 +7,9 @@ Histogram is obtained from the display hardware. This histogram is then fed to
 this algorithm. Upon applying the logic, enhanced pixel factor is generated
 which is then fed back to the dispay hardware.
 
+# Revision/History
+GHE 1.0 Base Implementation.
+
 ## Steps to compile
 meson build
 
