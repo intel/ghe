@@ -14,21 +14,14 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#define GLOBALHIST_BIN_COUNT 32   // Total number of segments in GlobalHist
-#define GLOBALHIST_IET_LUT_LENGTH 33 // Total number of IET entries
-
-enum pipe_id {
-	GlobalHist_PIPE_A = 0,
-	GlobalHist_PIPE_B = 1,
-	GlobalHist_PIPE_C = 2,
-	GlobalHist_PIPE_D = 3
-};
+#define XPST_BIN_COUNT 32
+#define XPST_IET_LUT_LENGTH 33
 
 struct globalhist_args {
-	enum pipe_id pipeid;
-	bool isprogramdiet;
-	uint32_t dietfactor[GLOBALHIST_IET_LUT_LENGTH];
-	uint32_t histogram[GLOBALHIST_BIN_COUNT];
+	uint8_t histogrammode;
+	uint32_t binscount;
+	uint32_t ietlutentries[XPST_IET_LUT_LENGTH];
+	uint32_t histogram[XPST_BIN_COUNT];
 	uint32_t resolution_x;
 	uint32_t resolution_y;
 };
