@@ -428,10 +428,6 @@ void DisplayGheAlgorithm(DISPLAY_PC_XPST_CONTEXT *pDpstContext)
         return;
     }
 
-    // Resetting params as this is not used by GHE
-    pDpstContext->Algorithm.XpstAlgorithmDynamicData.TargetBoost     = DPST_DEFAULT_BOOST;
-    pDpstContext->Algorithm.XpstAlgorithmDynamicData.BacklightAdjust = 100 * DD_BLC_PWM_LOW_PRECISION_FACTOR;
-
     DisplayGheAlgorithmCore_v1_0(pDpstContext);
 
     return;
@@ -464,9 +460,6 @@ void histogram_compute_generate_data_bin(struct globalhist_args *gheargs)
         pCfg->MaxSlope = GHE_IET_MAX_SLOPE;    /* 4000 */
         pCfg->MinSlope = GHE_IET_MIN_SLOPE;    /* 500 */
         
-        /* Set trigger mode to fixed aggressiveness (no ALS sensor) */
-        pCfg->GheTriggerConfig.Trigger = GHE_TRIGGER_FIXED_AGGRESSIVENESS;
-        pCfg->GheTriggerConfig.FixedAggressivenessPercent = 80;
         pCfg->AggressivenessFactor = 0.8;
         
         /* Compute histogram bin limits based on frame size and slopes */
@@ -501,24 +494,6 @@ void histogram_compute_generate_data_bin(struct globalhist_args *gheargs)
                 }
                 
                 pDpstContext->Algorithm.XpstAlgorithmStaticData.DeGammaLUT[i] = linear;
-        }
-
-        /* Gamma LUT: sRGB encoding (inverse of decoding, for completeness)
-         * Standard sRGB OETF:
-         *   if (v <= 0.0031308): 12.92 * v
-         *   else: 1.055 * pow(v, 1/2.4) - 0.055
-         */
-        for (int i = 0; i < XPST_BIN_COUNT; i++) {
-                double norm = (double)i / (double)(XPST_BIN_COUNT - 1);
-                double gamma;
-                
-                if (norm <= 0.0031308) {
-                        gamma = 12.92 * norm;
-                } else {
-                        gamma = 1.055 * pow(norm, 1.0 / 2.4) - 0.055;
-                }
-                
-                pDpstContext->Algorithm.XpstAlgorithmStaticData.GammaLUT[i] = gamma;
         }
 
         DisplayGheAlgorithm(pDpstContext);
