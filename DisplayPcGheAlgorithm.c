@@ -349,7 +349,13 @@ static void DisplayGheAlgorithmCore_v1_0(DISPLAY_PC_XPST_CONTEXT *pDpstContext)
     }
 
     // Normalizing CDF
-    CDFRange             = pGheParams->NormalizedCDF[XPST_MAX_BIN_INDEX] - MinCDFVal;
+    CDFRange = pGheParams->NormalizedCDF[XPST_MAX_BIN_INDEX] - MinCDFVal;
+
+    /* AdjustExcessBins() clamps every bin to at least MinHistBinCount, so the
+     * CDF is strictly increasing and CDFRange cannot be zero here.
+     */
+    assert(CDFRange > 0.0);
+
     CdfNormalizingFactor = 1.0 / CDFRange;
 
     for (BinIndex = 0; BinIndex < XPST_BIN_COUNT; BinIndex++)
@@ -421,6 +427,9 @@ void DisplayGheAlgorithm(DISPLAY_PC_XPST_CONTEXT *pDpstContext)
 {
     uint32_t ImageSize;
 
+    if (pDpstContext == NULL)
+        return;
+
     ImageSize = pDpstContext->Algorithm.XpstAlgorithmStaticData.ImageSize;
     // Sanity checks...
     if (0 == ImageSize)
@@ -435,7 +444,17 @@ void DisplayGheAlgorithm(DISPLAY_PC_XPST_CONTEXT *pDpstContext)
 
 void histogram_compute_generate_data_bin(struct globalhist_args *gheargs)
 {
+	if (gheargs == NULL)
+                return;
+
         if (gheargs->histogrammode != DRM_MODE_HISTOGRAM_HSV_MAX_RGB)
+                return;
+
+        /* Reject degenerate or out-of-range resolutions before allocating, so
+         * that the ImageSize product below cannot overflow uint32_t.
+         */
+        if (gheargs->resolution_x == 0 || gheargs->resolution_x > GHE_MAX_RESOLUTION ||
+            gheargs->resolution_y == 0 || gheargs->resolution_y > GHE_MAX_RESOLUTION)
                 return;
 
         DISPLAY_PC_XPST_CONTEXT *pDpstContext =
